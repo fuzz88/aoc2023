@@ -8,14 +8,6 @@ import (
 )
 
 func main() {
-	// 	s := `two1nine
-	// eightwothree
-	// abcone2threexyz
-	// xtwone3four
-	// 4nineeightseven2
-	// zoneight234
-	// 7pqrstsixteen`
-
 	s := `two1nine
 eightwothree
 abcone2threexyz
@@ -54,6 +46,7 @@ zoneight234
 		fmt.Printf("%v %v \n", i, t)
 	}
 	s = strings.Join(results, "\n")
+	fmt.Println(s)
 
 	sum := 0
 	t1 := -1
