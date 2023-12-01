@@ -8,6 +8,14 @@ import (
 )
 
 func main() {
+	// 	s := `two1nine
+	// eightwothree
+	// abcone2threexyz
+	// xtwone3four
+	// 4nineeightseven2
+	// zoneight234
+	// 7pqrstsixteen`
+
 	s := `two1nine
 eightwothree
 abcone2threexyz
@@ -19,7 +27,7 @@ zoneight234
 	numbers := map[int]string{1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
 
 	lines := strings.Split(s, "\n")
-	results := make([]string, len(lines))
+	results := make([]string, 0)
 	for _, line := range lines {
 		min := -1
 		for min != 10000 {
@@ -42,8 +50,11 @@ zoneight234
 		results = append(results, line)
 	}
 
-	fmt.Println(results)
+	for i, t := range results {
+		fmt.Printf("%v %v \n", i, t)
+	}
 	s = strings.Join(results, "\n")
+
 	sum := 0
 	t1 := -1
 	t2 := -1
