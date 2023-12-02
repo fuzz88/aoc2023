@@ -19,67 +19,72 @@ zoneight234
 	numbers := map[int]string{1: "one", 2: "two", 3: "three", 4: "four", 5: "five", 6: "six", 7: "seven", 8: "eight", 9: "nine"}
 
 	lines := strings.Split(s, "\n")
-	results := make([]string, 0)
-	for _, line := range lines {
-		min := -1
-		for min != 10000 {
-			indexes := make([]int, 9)
-			for idx, number := range numbers {
-				indexes[idx-1] = strings.Index(line, number)
-				if indexes[idx-1] == -1 {
-					indexes[idx-1] = 10000
-				}
-			}
-			min = slices.Min(indexes)
-			if min != 10000 {
-				number := slices.Index(indexes, min)
-				line = strings.Replace(line, numbers[number+1], strconv.Itoa(number+1), 1)
-				fmt.Println(min, number+1, line)
-			}
-
-		}
-
-		results = append(results, line)
-	}
-
-	for i, t := range results {
-		fmt.Printf("%v %v \n", i, t)
-	}
-	s = strings.Join(results, "\n")
-	fmt.Println(s)
 
 	sum := 0
-	t1 := -1
-	t2 := -1
-	for _, k := range s {
+	for _, line := range lines {
 
-		if k == 10 {
-			if t2 == -1 {
-				t2 = t1
+		left := 0
+		right := 0
+
+		left_pos := len(line) + 2
+		right_pos := -1
+
+		for num, number := range numbers {
+			num_pos := strings.Index(line, strconv.Itoa(num))
+			number_pos := strings.Index(line, number)
+
+			n_pos := -1
+
+			if num_pos == -1 {
+				if number_pos != -1 {
+					n_pos = number_pos
+				}
+			} else {
+				if number_pos != -1 {
+					n_pos = slices.Min([]int{num_pos, number_pos})
+				} else {
+					n_pos = num_pos
+				}
 			}
-			if t1 == -1 && t2 == -1 {
-				continue
+
+			if left_pos > n_pos && n_pos != -1 {
+				left = num
+				left_pos = n_pos
+				fmt.Println(num, n_pos, left_pos)
 			}
-			fmt.Printf("%v%v\n", t1, t2)
-			sum = sum + t1*10 + t2
-			fmt.Printf("%v\n", sum)
-			t1 = -1
-			t2 = -1
+
 		}
-		if (47 < k) && (k < 48+10) {
-			fmt.Printf("%v\n", k-48)
-			if t1 == -1 {
-				t1 = int(k - 48)
-				continue
+		fmt.Println()
+		for num, number := range numbers {
+			num_pos := strings.LastIndex(line, strconv.Itoa(num))
+			number_pos := strings.LastIndex(line, number)
+
+			n_pos := -1
+
+			if num_pos == -1 {
+				if number_pos != -1 {
+					n_pos = number_pos
+				}
+			} else {
+				if number_pos != -1 {
+					n_pos = slices.Max([]int{num_pos, number_pos})
+				} else {
+					n_pos = num_pos
+				}
+
 			}
 
-			t2 = int(k - 48)
+			if right_pos < n_pos && n_pos != -1 {
+				right = num
+				right_pos = n_pos
+				fmt.Println(num, n_pos, right_pos)
+			}
 
 		}
+		fmt.Println()
+		fmt.Println(left, right)
+		sum = sum + left*10 + right
+
 	}
-	if t2 == -1 {
-		t2 = t1
-	}
-	fmt.Printf("%v%v\n", t1, t2)
-	fmt.Printf("%v\n", sum+t1*10+t2)
+	fmt.Println(sum)
 }
