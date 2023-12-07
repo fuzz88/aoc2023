@@ -7,6 +7,8 @@ import (
 	"sync"
 )
 
+var wg sync.WaitGroup
+
 type SafeCounter struct {
 	mu sync.Mutex
 	v  int
@@ -27,7 +29,7 @@ func (c *SafeCounter) Value() int {
 }
 
 func main() {
-	raw_data, err := os.ReadFile("test2.txt")
+	raw_data, err := os.ReadFile("test1.txt")
 	if err != nil {
 		panic(err)
 	}
@@ -35,22 +37,27 @@ func main() {
 	sum := SafeCounter{v: 0}
 	line_start := 0
 	line_count := 0
+
 	for i := 0; i < len(raw_data); i++ {
 		if raw_data[i] == 10 {
-			checkLineParts(&raw_data, line_start, i, &sum)
+			go checkLineParts(&raw_data, line_start, i, &sum)
+			wg.Add(1)
 			line_start = i + 1
 			line_count++
 		}
 		if i == len(raw_data)-1 {
-			checkLineParts(&raw_data, line_start, i+1, &sum)
+			go checkLineParts(&raw_data, line_start, i+1, &sum)
+			wg.Add(1)
 			line_count++
 		}
 	}
+	wg.Wait()
 	fmt.Println(sum.Value())
 
 }
 
 func checkLineParts(raw_data *[]byte, line_start int, line_end int, sum *SafeCounter) {
+	defer wg.Done()
 	line_data := (*raw_data)[line_start:line_end]
 	// fmt.Println(line_data)
 	for i := 0; i < len(line_data); i++ {
@@ -72,6 +79,7 @@ func checkLineParts(raw_data *[]byte, line_start int, line_end int, sum *SafeCou
 			if num > 0 && isConnectedNum(raw_data, j+1, i-1, line_start, line_end) {
 				fmt.Println(num)
 				sum.Inc(num)
+
 			}
 
 		}
