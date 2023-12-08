@@ -4,7 +4,12 @@ import (
 	"fmt"
 	"math"
 	"os"
+	"sync"
 )
+
+var wg sync.WaitGroup
+
+var gearsMutex sync.Mutex
 
 type Gear struct {
 	i   int
@@ -25,14 +30,14 @@ func main() {
 
 	for i := 0; i < len(raw_data); i++ {
 		if raw_data[i] == 10 {
-			checkLineParts(&raw_data, line_start, i)
-
+			go checkLineParts(&raw_data, line_start, i)
+			wg.Add(1)
 			line_start = i + 1
 			line_count++
 		}
 		if i == len(raw_data)-1 {
-			checkLineParts(&raw_data, line_start, i+1)
-
+			go checkLineParts(&raw_data, line_start, i+1)
+			wg.Add(1)
 			line_count++
 		}
 	}
@@ -52,7 +57,7 @@ func main() {
 }
 
 func checkLineParts(raw_data *[]byte, line_start int, line_end int) {
-	// defer wg.Done()
+	defer wg.Done()
 	line_data := (*raw_data)[line_start:line_end]
 
 	// fmt.Println(line_data)
@@ -76,7 +81,9 @@ func checkLineParts(raw_data *[]byte, line_start int, line_end int) {
 				if gear := isConnectedNum(raw_data, j+1, i-1, line_start, line_end, num); gear != nil {
 					// fmt.Println(gear)
 					// fmt.Println(num)
+					gearsMutex.Lock()
 					gears = append(gears, gear)
+					gearsMutex.Unlock()
 				}
 
 			}
