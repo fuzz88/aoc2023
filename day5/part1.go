@@ -46,20 +46,12 @@ func main() {
 	prev_start := 0
 
 	for i := 0; i < len(raw_data); i++ {
-		if raw_data[i] == 10 && first_line {
-			// seeds at first line
-			seeds = parse_line(0, i, &raw_data)
-			first_line = false
-			prev_start = i + 1
-			fmt.Println(seeds)
-		}
-
 		if (raw_data[i] == 10 && !first_line && raw_data[i-1] != 10) || i == len(raw_data)-1 {
 			// maps, empty line skipped
 			nums := parse_line(prev_start, i, &raw_data)
+			fmt.Println(nums)
 			convert_seeds(&seeds, &nums)
 			prev_start = i + 1
-			fmt.Println(nums)
 
 		}
 		if raw_data[i] == 10 && (raw_data[i-1] < 48 || raw_data[i-1] > 57) {
@@ -69,6 +61,14 @@ func main() {
 			}
 			prev_start = i + 1
 		}
+		if raw_data[i] == 10 && first_line {
+			// seeds at first line
+			seeds = parse_line(0, i, &raw_data)
+			fmt.Println(seeds)
+			first_line = false
+			prev_start = i + 1
+		}
+
 	}
 
 }
