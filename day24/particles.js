@@ -1,21 +1,103 @@
+const fs = require('node:fs');
 
-/* 
+fs.readFile('particles.data', 'utf8', (err, data) => {
+    if (err) {
+        console.error(err);
+        return;
+    }
+    let hailstones = parseInput(data)
+    const intersectionsCount = findIntersectionsCount(hailstones, testArea);
+    console.log(intersectionsCount); // Output the number of intersections
 
-x, y, z, dx, dy, dz
-postion and velocity as a single array 
+});
 
-*/
+const testArea = {
+    minX: 200000000000000,
+    maxX: 400000000000000,
+    minY: 200000000000000,
+    maxY: 400000000000000
+};
 
-let particles = [
-    [19, 13, 30, -2, 1, -2],
-    [18, 19, 22, -1, -1, -2],
-    [20, 25, 34, -2, -2, -4],
-    [12, 31, 28, 1, -5, -3],
-];
+// Function to solve a system of linear equations using Gaussian elimination
+function solveLinearEquations(A, B) {
+    const n = A.length;
+    const augmentedMatrix = A.map((row, index) => [...row, B[index]]);
+
+    for (let i = 0; i < n; i++) {
+        const divisor = augmentedMatrix[i][i];
+        for (let j = i; j < n + 1; j++) {
+            augmentedMatrix[i][j] /= divisor;
+        }
+
+        for (let k = 0; k < n; k++) {
+            if (k !== i) {
+                const factor = augmentedMatrix[k][i];
+                for (let j = i; j < n + 1; j++) {
+                    augmentedMatrix[k][j] -= factor * augmentedMatrix[i][j];
+                }
+            }
+        }
+    }
+
+    return augmentedMatrix.map(row => row[n]);
+}
+
+// Function to check if two hailstones will intersect within a specified test area
+function willHailstonesIntersect(hailstoneA, hailstoneB, testArea) {
+    const A = [
+        [hailstoneA.velocity.x, -hailstoneB.velocity.x],
+        [hailstoneA.velocity.y, -hailstoneB.velocity.y]
+    ];
+
+    const B = [
+        hailstoneB.position.x - hailstoneA.position.x,
+        hailstoneB.position.y - hailstoneA.position.y
+    ];
+
+    const [t1, t2] = solveLinearEquations(A, B);
+
+    if (t1 >= 0 && t2 >= 0) {
+        // Calculate intersection points
+        const intersectionX = hailstoneA.position.x + hailstoneA.velocity.x * t1;
+        const intersectionY = hailstoneA.position.y + hailstoneA.velocity.y * t1;
+
+        // Check if the intersection points are within the test area
+        return (
+            intersectionX >= testArea.minX &&
+            intersectionX <= testArea.maxX &&
+            intersectionY >= testArea.minY &&
+            intersectionY <= testArea.maxY
+        );
+    }
+
+    return false;
+}
+
+// Function to find the number of intersections within a test area
+function findIntersectionsCount(hailstones, testArea) {
+    let count = 0;
+
+    for (let i = 0; i < hailstones.length - 1; i++) {
+        for (let j = i + 1; j < hailstones.length; j++) {
+            const intersect = willHailstonesIntersect(hailstones[i], hailstones[j], testArea);
+            if (intersect) {
+                count++;
+            }
+        }
+    }
+
+    return count;
+}
 
 
-console.log(particles)
-
-
-max_x = 10000000000
-max_y = 40000000000
+function parseInput(input) {
+    return input
+        .trim()
+        .split('\n')
+        .map((line) => {
+            const [px, py, pz, vx, vy, vz] = line
+                .match(/(-?\d+)/g)
+                .map((num) => parseInt(num, 10));
+            return { position: { x: px, y: py, z: pz }, velocity: { x: vx, y: vy, z: vz } };
+        });
+}
