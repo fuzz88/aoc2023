@@ -31,60 +31,50 @@ func readInput(filename string) (map[string][]string, error) {
 	return graph, nil
 }
 
-// func disconnectWires(graph map[string][]string, disconnectCount int) (int, error) {
-// 	resetButton := "reset"
-// 	visited := make(map[string]bool)
-// 	groupSizes := make([]int, 0)
+func disconnectWires(graph map[string][]string, disconnectCount int) (int, error) {
+	resetButton := "reset"
+	groupSizes := make([]int, 0)
 
-// 	var dfs func(component string) int
-// 	dfs = func(component string) int {
-// 		visited[component] = true
-// 		size := 1
-// 		for _, neighbor := range graph[component] {
-// 			if !visited[neighbor] && neighbor != resetButton {
-// 				size += dfs(neighbor)
-// 			}
-// 		}
-// 		return size
-// 	}
+	var dfs func(component string) int
+	dfs = func(component string) int {
+		size := 1
+		for _, neighbor := range graph[component] {
+			if neighbor != resetButton {
+				size += dfs(neighbor)
+			}
+		}
+		return size
+	}
 
-// 	for disconnectCount > 0 {
-// 		// Find the component with the largest group
-// 		maxSize := 0
-// 		maxComponent := ""
-// 		for component := range graph {
-// 			if !visited[component] && component != resetButton {
-// 				size := dfs(component)
-// 				if size > maxSize {
-// 					maxSize = size
-// 					maxComponent = component
-// 				}
-// 			}
-// 		}
+	for disconnectCount > 0 {
+		// Find the component with the largest group
+		maxSize := 0
+		maxComponent := ""
+		for component := range graph {
+			size := dfs(component)
+			if size > maxSize {
+				maxSize = size
+				maxComponent = component
+			}
+		}
 
-// 		// Disconnect the largest group by removing edges
-// 		for _, neighbor := range graph[maxComponent] {
-// 			delete(graph[neighbor], maxComponent)
-// 			delete(graph[maxComponent], neighbor)
-// 		}
+		// Disconnect the largest group by removing the component
+		delete(graph, maxComponent)
 
-// 		// Recalculate group sizes
-// 		groupSizes = append(groupSizes, dfs(resetButton))
+		// Recalculate group sizes
+		groupSizes = append(groupSizes, dfs(resetButton))
 
-// 		// Reset visited for the next iteration
-// 		visited = make(map[string]bool)
+		disconnectCount--
+	}
 
-// 		disconnectCount--
-// 	}
+	// Multiply the sizes of the disconnected groups
+	result := 1
+	for _, size := range groupSizes {
+		result *= size
+	}
 
-// 	// Multiply the sizes of the disconnected groups
-// 	result := 1
-// 	for _, size := range groupSizes {
-// 		result *= size
-// 	}
-
-// 	return result, nil
-// }
+	return result, nil
+}
 
 func main() {
 	filename := "test0.txt" // Change this to your actual input file name
@@ -96,12 +86,12 @@ func main() {
 
 	fmt.Println(graph)
 
-	// disconnectCount := 3
-	// result, err := disconnectWires(graph, disconnectCount)
-	// if err != nil {
-	// 	fmt.Println("Error disconnecting wires:", err)
-	// 	return
-	// }
+	disconnectCount := 3
+	result, err := disconnectWires(graph, disconnectCount)
+	if err != nil {
+		fmt.Println("Error disconnecting wires:", err)
+		return
+	}
 
-	// fmt.Println("Result:", result)
+	fmt.Println("Result:", result)
 }
