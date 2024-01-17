@@ -8,7 +8,7 @@ import (
 )
 
 func parse_line(start int, end int, raw_data *[]byte) []int {
-	/* converts numbers from byte string representation to slice of integers */
+	/* converts numbers from byte string representation to a slice of integers */
 	result := make([]int, 0)
 	num := 0
 	pow := 0.0
