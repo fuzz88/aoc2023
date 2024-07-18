@@ -30,10 +30,10 @@ func parse_line(start int, end int, raw_data *[]byte) []int {
 }
 
 func convert_seeds(seeds []int, convs [][]int) {
-	fmt.Printf("seeds: %v\n\n", seeds)
+	//fmt.Printf("seeds: %v\n\n", seeds)
 	for i, seed := range seeds {
 		for _, conv := range convs {
-			fmt.Printf("conv : %v\n\n", conv)
+			//fmt.Printf("conv : %v\n\n", conv)
 			if (seed >= conv[1]) && (seed <= (conv[1] + conv[2] - 1)) {
 				seeds[i] = conv[0] - conv[1] + seed
 				break
@@ -42,8 +42,8 @@ func convert_seeds(seeds []int, convs [][]int) {
 	}
 }
 
-func main() {
-	raw_data, err := os.ReadFile("test2.txt")
+func solveFilePart1(filePath string) {
+	raw_data, err := os.ReadFile(filePath)
 	if err != nil {
 		panic(err)
 	}
@@ -51,7 +51,6 @@ func main() {
 
 	var seeds []int
 	var nums [][]int
-	var new_seeds []int
 
 	first_line := true
 	prev_start := 0
@@ -66,7 +65,7 @@ func main() {
 		}
 		if raw_data[i] == 10 && (raw_data[i-1] < 48 || raw_data[i-1] > 57) {
 			// it is map description line, skip to next conversion map
-			convert_seeds(new_seeds, nums)
+			convert_seeds(seeds, nums)
 			nums = nil
 			i = i + 2
 			for ; raw_data[i] != 10; i++ {
@@ -76,15 +75,8 @@ func main() {
 		if raw_data[i] == 10 && first_line {
 			// seeds at first line
 			seeds = parse_line(0, i, &raw_data)
-			for i := 0; i < len(seeds); i = i + 1 {
-				if i%2 == 0 {
-					for j := 0; j < seeds[i+1]; j = j + 1 {
-						new_seeds = append(new_seeds, seeds[i] + j)
-					}
-				}
-			}
 
-			// fmt.Println(new_seeds)
+			fmt.Println(seeds)
 
 			first_line = false
 			prev_start = i + 1
@@ -92,8 +84,77 @@ func main() {
 
 	}
 
-	convert_seeds(new_seeds, nums)
-	fmt.Println(new_seeds)
-	fmt.Println(slices.Min(new_seeds))
+	convert_seeds(seeds, nums)
+	fmt.Println("The answer of part1 is :", slices.Min(seeds))
+	
+}
 
+type seedRange struct {
+	start 	int
+	length 	int
+}
+
+
+
+func solveFilePart2(filePath string) {
+	
+	raw_data, err := os.ReadFile(filePath)
+	if err != nil {
+		panic(err)
+	}
+	// fmt.Println(raw_data)
+
+	var seeds []seedRange
+	var nums [][]int
+
+	first_line := true
+	prev_start := 0
+
+	for i := 0; i < len(raw_data); i++ {
+		if (raw_data[i] == 10 && !first_line && raw_data[i-1] != 10) || i == len(raw_data)-1 {
+			// maps, empty line skipped
+			num := parse_line(prev_start, i, &raw_data)
+			nums = append(nums, num)
+			// fmt.Println(nums)
+			prev_start = i + 1
+		}
+		if raw_data[i] == 10 && (raw_data[i-1] < 48 || raw_data[i-1] > 57) {
+			// it is map description line, skip to next conversion map
+			//convert_seeds(seeds, nums)
+			nums = nil
+			i = i + 2
+			for ; raw_data[i] != 10; i++ {
+			}
+			prev_start = i + 1
+		}
+		if raw_data[i] == 10 && first_line {
+			// seeds at first line
+			seed_nums := parse_line(0, i, &raw_data)
+			
+			for i, seed := range seed_nums {
+				if i%2 == 0 {
+					seeds = append(seeds, seedRange{start: seed, length: seed_nums[i+1]})
+				}
+			}
+			fmt.Println(seeds)
+
+			first_line = false
+			prev_start = i + 1
+		}
+
+	}
+
+	//convert_seeds(seeds, nums)
+	fmt.Println("The answer of part2 is :", nil)
+	
+
+
+
+}
+
+func main() {
+	for _, filePath := range os.Args[1:] {
+		solveFilePart1(filePath)
+		solveFilePart2(filePath)
+	}
 }
