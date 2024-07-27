@@ -87,12 +87,12 @@ func solveFilePart1(filePath string) {
 	convert_seeds(seeds, nums)
 	fmt.Println(seeds)
 	fmt.Println("The answer of part1 is :", slices.Min(seeds))
-	
+
 }
 
 type Range struct {
-	start 	int
-	length 	int
+	start  int
+	length int
 }
 
 func convertSeedRanges(seeds []Range, maps [][]int) []Range {
@@ -107,25 +107,11 @@ func convertSeedRanges(seeds []Range, maps [][]int) []Range {
 
 func processSeedToMap(seed Range, maps [][]int) []Range {
 	var result []Range
-	for _, m := range maps {
-		from := Range{start: m[1], length: m[2]}
-		//to := Range{start: m[0], length: m[2]}
-		fmt.Println("ProcessSeedToMap", seed, m)	
-		i_start := max(seed.start, from.start)
-		i_end := min(seed.start + seed.length, from.start + from.length)
-		if (i_start <= i_end) {
-			var intersection = Range{start: i_start, length: i_end - i_start}
-			fmt.Println(intersection)
-		}
-		
-	}
 	return result
-} 
-
-
+}
 
 func solveFilePart2(filePath string) {
-	
+
 	raw_data, err := os.ReadFile(filePath)
 	if err != nil {
 		panic(err)
@@ -148,9 +134,9 @@ func solveFilePart2(filePath string) {
 		}
 		if raw_data[i] == 10 && (raw_data[i-1] < 48 || raw_data[i-1] > 57) {
 			// it is map description line, skip to next conversion map
-			if (len(nums) != 0) {
+			if len(nums) != 0 {
 				fmt.Println(nums)
-                results = convertSeedRanges(results, nums)
+				results = convertSeedRanges(results, nums)
 				nums = nil
 			}
 			i = i + 2
@@ -161,14 +147,14 @@ func solveFilePart2(filePath string) {
 		if raw_data[i] == 10 && first_line {
 			// seeds at first line
 			seed_nums := parse_line(0, i, &raw_data)
-			var seeds []Range	
+			var seeds []Range
 			for i, seed := range seed_nums {
 				if i%2 == 0 {
 					seeds = append(seeds, Range{start: seed, length: seed_nums[i+1]})
 				}
 			}
 			fmt.Println(seeds)
-			results = seeds;
+			results = seeds
 			first_line = false
 			prev_start = i + 1
 		}
@@ -179,9 +165,6 @@ func solveFilePart2(filePath string) {
 	fmt.Println(nums)
 	fmt.Println(results)
 	fmt.Println("The answer of part2 is :", nil)
-	
-
-
 
 }
 
