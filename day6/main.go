@@ -28,8 +28,8 @@ func read_data_from_file(filePath string) ([]Race, error) {
 	}
 	defer file.Close()
 
-	scanner := bufio.NewScanner(file)
 	var data []int
+	scanner := bufio.NewScanner(file)
 	for scanner.Scan() {
 		text := scanner.Text()
 		nums := strings.Fields(text)
@@ -41,13 +41,11 @@ func read_data_from_file(filePath string) ([]Race, error) {
 			data = append(data, s)
 		}
 	}
-
 	if err := scanner.Err(); err != nil {
 		return nil, err
 	}
 
 	var results []Race
-
 	for i := 0; i < len(data)/2; i++ {
 		results = append(results, Race{time: data[i], distance: data[len(data)/2+i]})
 	}
