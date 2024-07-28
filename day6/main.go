@@ -53,12 +53,11 @@ func read_data_from_file(filePath string) ([]Race, error) {
 }
 
 func solvePart1(races []Race) int {
-	fmt.Println(races)
 	return 0
 }
 
 func main() {
-	fmt.Println("AOC_2023 Day6 Solution")
+	fmt.Printf("\nAOC_2023 Day6 Solution\n")
 
 	args := os.Args[1:]
 	for _, filePath := range args {
@@ -66,7 +65,7 @@ func main() {
 		if err != nil {
 			fmt.Println(err)
 		}
-		solvePart1(data)
+		fmt.Printf("input: %v\n", data)
+		fmt.Printf("Part 1: %d\n\n", solvePart1(data))
 	}
-
 }
