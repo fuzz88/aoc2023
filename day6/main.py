@@ -1,4 +1,4 @@
-from numba import jit
+from numba import njit
 from time import monotonic
 
 
@@ -39,7 +39,7 @@ def read_single_race_from_file(filename) -> tuple:
     return race
 
 
-@jit(nopython=True)
+@njit
 def solvePart1(races) -> int:
     result = 1
     for race in races:
@@ -53,7 +53,7 @@ def solvePart1(races) -> int:
     return result
 
 
-@jit(nopython=True)
+@njit
 def solvePart2(race) -> int:
     success_count = 0
     for speed in range(0, race[0] + 1):
