@@ -1,4 +1,5 @@
 from numba import jit
+from time import monotonic
 
 
 def read_races_from_file(filename) -> list:
@@ -38,7 +39,7 @@ def read_single_race_from_file(filename) -> tuple:
     return race
 
 
-@jit
+@jit(nopython=True)
 def solvePart1(races) -> int:
     result = 1
     for race in races:
@@ -55,23 +56,21 @@ def solvePart1(races) -> int:
 @jit(nopython=True)
 def solvePart2(race) -> int:
     success_count = 0
-    t_time = race[0]
-    t_dist = race[1]
     for speed in range(0, race[0] + 1):
-        time = t_time - speed
+        time = race[0] - speed
         distance = speed * time
-        if distance > t_dist:
+        if distance > race[1]:
             success_count = success_count + 1
     return success_count
 
 
-races = read_races_from_file("test1.txt")
-print(f"part1: {solvePart1(races)}")
+if __name__ == "__main__":
+    races = read_races_from_file("test1.txt")
+    print(f"part1: {solvePart1(races)}")
 
-race = read_single_race_from_file("test2.txt")
-from time import monotonic
+    race = read_single_race_from_file("test2.txt")
 
-start = monotonic()
-print(f"part2: {solvePart2(race)}")
-total = monotonic() - start
-print(f"part2 time: {total:.3f}s")
+    start = monotonic()
+    print(f"part2: {solvePart2(race)}")
+    total = monotonic() - start
+    print(f"part2 time: {total:.3f}s")
