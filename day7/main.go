@@ -155,7 +155,8 @@ func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
 }
 
 func solvePart1(filePath string) int {
-	hands, err := readHandsFromFile(filePath, false)
+	withJoker := false
+	hands, err := readHandsFromFile(filePath, withJoker)
 	if err != nil {
 		panic(err)
 	}
@@ -169,7 +170,8 @@ func solvePart1(filePath string) int {
 	return total_win
 }
 func solvePart2(filePath string) int {
-	hands, err := readHandsFromFile(filePath, true)
+	withJoker := true
+	hands, err := readHandsFromFile(filePath, withJoker)
 	if err != nil {
 		panic(err)
 	}
