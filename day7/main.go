@@ -117,7 +117,6 @@ func (a ByCardsWithJoker) Less(i, j int) bool {
 }
 
 func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
-	fmt.Println("input file:", filePath)
 	file, err := os.Open(filePath)
 	if err != nil {
 		return nil, err
@@ -155,7 +154,7 @@ func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
 	return result, nil
 }
 
-func solvePart1(filePath string) {
+func solvePart1(filePath string) int {
 	hands, err := readHandsFromFile(filePath, false)
 	if err != nil {
 		panic(err)
@@ -165,10 +164,11 @@ func solvePart1(filePath string) {
 	for i, v := range hands {
 		t := i + 1
 		total_win = total_win + t*v.bid
+
 	}
-	fmt.Printf("Part1:  %v\n", total_win)
+	return total_win
 }
-func solvePart2(filePath string) {
+func solvePart2(filePath string) int {
 	hands, err := readHandsFromFile(filePath, true)
 	if err != nil {
 		panic(err)
@@ -179,7 +179,7 @@ func solvePart2(filePath string) {
 		t := i + 1
 		total_win = total_win + t*v.bid
 	}
-	fmt.Printf("Part2:  %v\n", total_win)
+	return total_win
 }
 
 func main() {
@@ -187,7 +187,8 @@ func main() {
 
 	args := os.Args[1:] // skip program filename
 	for _, filePath := range args {
-		solvePart1(filePath)
-		solvePart2(filePath)
+		fmt.Println("input file:", filePath)
+		fmt.Println("part1: ", solvePart1(filePath))
+		fmt.Println("part2: ", solvePart2(filePath))
 	}
 }
