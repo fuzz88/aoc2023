@@ -88,10 +88,7 @@ func getHandTypeAsNumWithJoker(cards string) int {
 func (a ByCards) Len() int      { return len(a) }
 func (a ByCards) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByCards) Less(i, j int) bool {
-	cardOrder := "23456789TJQKA"
-	if JOKERS {
-		cardOrder = "J23456789TQKA"
-	}
+	cardOrder := "J23456789TQKA"
 	if a[i].hand_type != a[j].hand_type {
 		return a[i].hand_type < a[j].hand_type
 	} else {
