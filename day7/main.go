@@ -12,6 +12,8 @@ import (
 	"golang.org/x/exp/maps"
 )
 
+const JOKERS = true // refactor that
+
 type Hand struct {
 	cards     string
 	bid       int
@@ -21,12 +23,32 @@ type Hand struct {
 type ByCards []Hand
 
 func getHandTypeAsNum(cards string) int {
+	joker_count := 0
 	var cards_counter = make(map[rune]int)
-	for _, card := range cards {
-		cards_counter[card]++
+	if JOKERS {
+		for _, card := range cards {
+			if card == 'J' {
+				joker_count++
+			} else {
+				cards_counter[card]++
+			}
+		}
+	} else {
+		for _, card := range cards {
+			cards_counter[card]++
+		}
 	}
 	var cards_structure []int
 	cards_structure = maps.Values(cards_counter)
+	if JOKERS {
+		if joker_count == 5 {
+			cards_structure = append(cards_structure, joker_count)
+		} else {
+			max_value := slices.Max(cards_structure)
+			max_index := slices.Index(cards_structure, max_value)
+			cards_structure[max_index] = cards_structure[max_index] + joker_count
+		}
+	}
 	sort.Slice(cards_structure, func(i, j int) bool {
 		return cards_structure[i] < cards_structure[j]
 	})
@@ -60,6 +82,9 @@ func (a ByCards) Len() int      { return len(a) }
 func (a ByCards) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
 func (a ByCards) Less(i, j int) bool {
 	cardOrder := "23456789TJQKA"
+	if JOKERS {
+		cardOrder = "J23456789TQKA"
+	}
 	if a[i].hand_type != a[j].hand_type {
 		return a[i].hand_type < a[j].hand_type
 	} else {
@@ -111,8 +136,8 @@ func main() {
 		total_win := 0
 		for i, v := range hands {
 			t := i + 1
-			total_win = total_win +  t * v.bid
+			total_win = total_win + t*v.bid
 		}
-		fmt.Printf("Part 1: %v\n", total_win)
+		fmt.Printf("Answer:  %v\n", total_win)
 	}
 }
