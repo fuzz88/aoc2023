@@ -12,8 +12,6 @@ import (
 	"golang.org/x/exp/maps"
 )
 
-const JOKERS = true // refactor that
-
 type Hand struct {
 	cards     string
 	bid       int
