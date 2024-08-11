@@ -154,6 +154,9 @@ func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
 		}
 		result = append(result, hand)
 	}
+	if err:= scanner.Err(); err != nil {
+		return nil, err
+	}
 	return result, nil
 }
 
