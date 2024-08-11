@@ -21,38 +21,9 @@ type Hand struct {
 }
 
 type ByCards []Hand
+type ByCardsWithJoker []Hand
 
-func getHandTypeAsNum(cards string) int {
-	joker_count := 0
-	var cards_counter = make(map[rune]int)
-	if JOKERS {
-		for _, card := range cards {
-			if card == 'J' {
-				joker_count++
-			} else {
-				cards_counter[card]++
-			}
-		}
-	} else {
-		for _, card := range cards {
-			cards_counter[card]++
-		}
-	}
-	var cards_structure []int
-	cards_structure = maps.Values(cards_counter)
-	if JOKERS {
-		if joker_count == 5 {
-			cards_structure = append(cards_structure, joker_count)
-		} else {
-			max_value := slices.Max(cards_structure)
-			max_index := slices.Index(cards_structure, max_value)
-			cards_structure[max_index] = cards_structure[max_index] + joker_count
-		}
-	}
-	sort.Slice(cards_structure, func(i, j int) bool {
-		return cards_structure[i] < cards_structure[j]
-	})
-
+func identifyCardStructure(cards_structure []int) int {
 	if slices.Equal(cards_structure, []int{5}) {
 		return 7
 	}
@@ -74,8 +45,46 @@ func getHandTypeAsNum(cards string) int {
 	if slices.Equal(cards_structure, []int{1, 1, 1, 1, 1}) {
 		return 1
 	}
-
 	return 0
+}
+
+func getHandTypeAsNum(cards string) int {
+	var cards_counter = make(map[rune]int)
+	for _, card := range cards {
+		cards_counter[card]++
+	}
+	var cards_structure []int
+	cards_structure = maps.Values(cards_counter)
+	sort.Slice(cards_structure, func(i, j int) bool {
+		return cards_structure[i] < cards_structure[j]
+	})
+	return identifyCardStructure(cards_structure)
+
+}
+
+func getHandTypeAsNumWithJoker(cards string) int {
+	joker_count := 0
+	var cards_counter = make(map[rune]int)
+	for _, card := range cards {
+		if card == 'J' {
+			joker_count++
+		} else {
+			cards_counter[card]++
+		}
+	}
+	var cards_structure []int
+	cards_structure = maps.Values(cards_counter)
+	if joker_count == 5 {
+		cards_structure = append(cards_structure, joker_count)
+	} else {
+		max_value := slices.Max(cards_structure)
+		max_index := slices.Index(cards_structure, max_value)
+		cards_structure[max_index] = cards_structure[max_index] + joker_count
+	}
+	sort.Slice(cards_structure, func(i, j int) bool {
+		return cards_structure[i] < cards_structure[j]
+	})
+	return identifyCardStructure(cards_structure)
 }
 
 func (a ByCards) Len() int      { return len(a) }
@@ -96,8 +105,23 @@ func (a ByCards) Less(i, j int) bool {
 		return true
 	}
 }
+func (a ByCardsWithJoker) Len() int      { return len(a) }
+func (a ByCardsWithJoker) Swap(i, j int) { a[i], a[j] = a[j], a[i] }
+func (a ByCardsWithJoker) Less(i, j int) bool {
+	cardOrder := "J23456789TQKA"
+	if a[i].hand_type != a[j].hand_type {
+		return a[i].hand_type < a[j].hand_type
+	} else {
+		for t := 0; t < 5; t++ {
+			if a[i].cards[t] != a[j].cards[t] {
+				return strings.IndexByte(cardOrder, a[i].cards[t]) < strings.IndexByte(cardOrder, a[j].cards[t])
+			}
+		}
+		return true
+	}
+}
 
-func readHandsFromFile(filePath string) ([]Hand, error) {
+func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
 	fmt.Println("input file:", filePath)
 	file, err := os.Open(filePath)
 	if err != nil {
@@ -114,13 +138,50 @@ func readHandsFromFile(filePath string) ([]Hand, error) {
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, Hand{
-			cards:     values[0],
-			bid:       bid,
-			hand_type: getHandTypeAsNum(values[0]),
-		})
+		var hand Hand
+		if !withJoker {
+			hand = Hand{
+				cards:     values[0],
+				bid:       bid,
+				hand_type: getHandTypeAsNum(values[0]),
+			}
+		} else {
+			hand = Hand{
+				cards:     values[0],
+				bid:       bid,
+				hand_type: getHandTypeAsNumWithJoker(values[0]),
+			}
+		}
+		result = append(result, hand)
 	}
 	return result, nil
+}
+
+func solvePart1(filePath string) {
+	hands, err := readHandsFromFile(filePath, false)
+	if err != nil {
+		panic(err)
+	}
+	sort.Sort(ByCards(hands))
+	total_win := 0
+	for i, v := range hands {
+		t := i + 1
+		total_win = total_win + t*v.bid
+	}
+	fmt.Printf("Part1:  %v\n", total_win)
+}
+func solvePart2(filePath string) {
+	hands, err := readHandsFromFile(filePath, true)
+	if err != nil {
+		panic(err)
+	}
+	sort.Sort(ByCardsWithJoker(hands))
+	total_win := 0
+	for i, v := range hands {
+		t := i + 1
+		total_win = total_win + t*v.bid
+	}
+	fmt.Printf("Part2:  %v\n", total_win)
 }
 
 func main() {
@@ -128,16 +189,7 @@ func main() {
 
 	args := os.Args[1:] // skip program filename
 	for _, filePath := range args {
-		hands, err := readHandsFromFile(filePath)
-		if err != nil {
-			panic(err)
-		}
-		sort.Sort(ByCards(hands))
-		total_win := 0
-		for i, v := range hands {
-			t := i + 1
-			total_win = total_win + t*v.bid
-		}
-		fmt.Printf("Answer:  %v\n", total_win)
+		solvePart1(filePath)
+		solvePart2(filePath)
 	}
 }
