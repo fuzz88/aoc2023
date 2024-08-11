@@ -1,16 +1,16 @@
 package main
 
 import (
+	"bufio"
 	"fmt"
 	"os"
-	"strings"
-	"bufio"
 	"strconv"
+	"strings"
 )
 
 type Hand struct {
-	cards	string;
-	bid		int;
+	cards string
+	bid   int
 }
 
 func readHandsFromFile(filePath string) ([]Hand, error) {
@@ -30,8 +30,8 @@ func readHandsFromFile(filePath string) ([]Hand, error) {
 		if err != nil {
 			return nil, err
 		}
-		result = append(result, Hand{cards: values[0], bid: bid}) 
-	} 
+		result = append(result, Hand{cards: values[0], bid: bid})
+	}
 	return result, nil
 }
 
