@@ -64,11 +64,57 @@ func findStartNodes(nodes Network) []string {
 	return startNodes
 }
 
+func getNextNode(net Network, node_name string, instruction string) string {
+	if instruction == "R" {
+		return net[node_name][1]
+	}
+	if instruction == "L" {
+		return net[node_name][0]
+	}
+	panic("wrong instruction")
+}
+
+// greatest common divisor (GCD) via Euclidean algorithm
+func GCD(a, b int) int {
+	for b != 0 {
+		t := b
+		b = a % b
+		a = t
+	}
+	return a
+}
+
+// find Least Common Multiple (LCM) via GCD
+func LCM(a, b int, integers ...int) int {
+	result := a * b / GCD(a, b)
+
+	for i := 0; i < len(integers); i++ {
+		result = LCM(result, integers[i])
+	}
+
+	return result
+}
+
 func solve(net Network, nav Navigation) int {
 	var current_nodes []string
 	current_nodes = findStartNodes(net)
-	fmt.Println(current_nodes)
-	return 0
+	answer := 1
+	for _, node := range current_nodes {
+		steps := 0
+		next_node := node
+		for i := 0; ; i++ {
+			next_instr := string(nav[i%len(nav)])
+
+			if !strings.HasSuffix(next_node, "Z") {
+				steps++
+				next_node = getNextNode(net, next_node, next_instr)
+			} else {
+				answer = LCM(answer, steps)
+				break
+			}
+		}
+	}
+	return answer
 }
 
 func main() {
@@ -80,8 +126,7 @@ func main() {
 		if err != nil {
 			panic(err)
 		}
-		fmt.Println(navigation)
-		fmt.Println("Part2: ", solve(network, navigation))
+		fmt.Println("Answer: ", solve(network, navigation))
 
 	}
 }
