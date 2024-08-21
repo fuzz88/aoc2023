@@ -39,27 +39,42 @@ func readSeqsFromFile(filePath string) [][]int {
 	return result
 }
 
+func checkAllSame(seq []int) bool {
+	for i := 0; i < len(seq)-1; i++ {
+		if seq[i] != seq[i+1] {
+			return false
+		}
+	}
+	return true
+}
+
 func getNextValueForSeq(seq []int) int {
-	var sub_seq []int
-	dx := seq[0] - seq[1]
-	if dx == 0 {
+	if checkAllSame(seq) {
 		return seq[0]
 	}
+	var sub_seq []int
 	for i := 0; i < len(seq)-1; i++ {
 		sub_seq = append(sub_seq, seq[i]-seq[i+1])
 	}
-	fmt.Println(sub_seq)
 	return seq[0] + getNextValueForSeq(sub_seq)
 
 }
 
-func solve(seqs [][]int) int {
+func solvePart1(seqs [][]int) int {
 	result := 0
 	for _, seq := range seqs {
 		slices.Reverse(seq)
-		fmt.Println(seq)
 		value := getNextValueForSeq(seq)
-		fmt.Println(value)
+		result = result + value
+	}
+	return result
+}
+
+func solvePart2(seqs [][]int) int {
+	result := 0
+	for _, seq := range seqs {
+		//slices.Reverse(seq)
+		value := getNextValueForSeq(seq)
 		result = result + value
 	}
 	return result
@@ -71,6 +86,7 @@ func main() {
 	for _, filePath := range args {
 		fmt.Println(filePath)
 		seqs := readSeqsFromFile(filePath)
-		fmt.Println(solve(seqs))
+		fmt.Println("part1: ", solvePart1(seqs))
+		fmt.Println("part2: ", solvePart1(seqs))
 	}
 }
