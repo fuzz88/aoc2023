@@ -15,6 +15,7 @@ type Race struct {
 
 func read_data_from_file(filePath string) ([]Race, error) {
 	file, err := os.Open(filePath)
+	defer file.Close()
 	if err != nil {
 		return nil, err
 	}

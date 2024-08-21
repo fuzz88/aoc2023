@@ -118,6 +118,7 @@ func (a ByCardsWithJoker) Less(i, j int) bool {
 
 func readHandsFromFile(filePath string, withJoker bool) ([]Hand, error) {
 	file, err := os.Open(filePath)
+	defer file.Close()
 	if err != nil {
 		return nil, err
 	}

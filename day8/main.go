@@ -28,6 +28,7 @@ func parseLineAsNode(line string) Node {
 
 func readNetworkFromFile(filePath string) (Network, Navigation, error) {
 	file, err := os.Open(filePath)
+	defer file.Close()
 	if err != nil {
 		return nil, "", err
 	}
