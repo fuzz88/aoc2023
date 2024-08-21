@@ -60,20 +60,10 @@ func getNextValueForSeq(seq []int) int {
 
 }
 
-func solvePart1(seqs [][]int) int {
+func solve(seqs [][]int) int {
 	result := 0
 	for _, seq := range seqs {
-		slices.Reverse(seq)
-		value := getNextValueForSeq(seq)
-		result = result + value
-	}
-	return result
-}
-
-func solvePart2(seqs [][]int) int {
-	result := 0
-	for _, seq := range seqs {
-		//slices.Reverse(seq)
+		slices.Reverse(seq) // side effect
 		value := getNextValueForSeq(seq)
 		result = result + value
 	}
@@ -86,7 +76,7 @@ func main() {
 	for _, filePath := range args {
 		fmt.Println(filePath)
 		seqs := readSeqsFromFile(filePath)
-		fmt.Println("part1: ", solvePart1(seqs))
-		fmt.Println("part2: ", solvePart1(seqs))
+		fmt.Println("part1: ", solve(seqs))
+		fmt.Println("part2: ", solve(seqs)) // on second run `seqs` is reversed 
 	}
 }
