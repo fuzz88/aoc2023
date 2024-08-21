@@ -8,7 +8,7 @@ import (
 	"strings"
 )
 
-func readSeqFromFile(filePath string) [][]int {
+func readSeqsFromFile(filePath string) [][]int {
 	file, err := os.Open(filePath)
 	defer file.Close()
 	if err != nil {
@@ -43,6 +43,6 @@ func main() {
 	args := os.Args[1:]
 	for _, filePath := range args {
 		fmt.Println(filePath)
-		fmt.Println(len(readSeqFromFile(filePath)))
+		fmt.Println(len(readSeqsFromFile(filePath)))
 	}
 }
