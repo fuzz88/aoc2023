@@ -77,6 +77,6 @@ func main() {
 		fmt.Println(filePath)
 		seqs := readSeqsFromFile(filePath)
 		fmt.Println("part1: ", solve(seqs))
-		fmt.Println("part2: ", solve(seqs)) // on second run `seqs` is reversed 
+		fmt.Println("part2: ", solve(seqs)) // on second run each `seq` in `seqs` is reversed 
 	}
 }
