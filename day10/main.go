@@ -224,12 +224,12 @@ func main() {
 		}
 		fmt.Println("Part1: ", solve(surface))
 		cleanSurface(surface)
-		for i:=0; i < len(original_surface); i++ {
-			fmt.Println(string(original_surface[i]))
-		}
+//		for i:=0; i < len(original_surface); i++ {
+//			fmt.Println(string(original_surface[i]))
+//		}
 		fmt.Println("Part2: ", solve2(surface, original_surface))
-		for i:=0; i < len(surface); i++ {
-			fmt.Println(string(surface[i]))
-		}
+//		for i:=0; i < len(surface); i++ {
+//			fmt.Println(string(surface[i]))
+//		}
 	}
 }
