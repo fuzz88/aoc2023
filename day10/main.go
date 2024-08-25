@@ -200,14 +200,19 @@ func main() {
 	for _, filePath := range args {
 		fmt.Println(filePath)
 		surface := readSurfaceFromFile(filePath)
-		for i:=0; i < len(surface); i++ {
-			fmt.Println(string(surface[i]))
+		original_surface := make(Surface, len(surface))
+		for i:= 0; i< len(surface); i++ {
+			original_surface[i] = make([]rune, len(surface[i]))
+			copy(original_surface[i], surface[i])
 		}
 		fmt.Println("Part1: ", solve(surface))
 		cleanSurface(surface)
+		for i:=0; i < len(original_surface); i++ {
+			fmt.Println(string(original_surface[i]))
+		}
+		fmt.Println("Part2: ", solve2(surface))
 		for i:=0; i < len(surface); i++ {
 			fmt.Println(string(surface[i]))
 		}
-		fmt.Println("Part2: ", solve2(surface))
 	}
 }
