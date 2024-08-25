@@ -32,7 +32,7 @@ func readSurfaceFromFile(filePath string) Surface {
 func findStart(surface Surface) (int, int) {
 	for i := 0; i < len(surface); i++ {
 		for j := 0; j < len(surface[i]); j++ {
-			if surface[i][j] == []rune("S")[0] {
+			if surface[i][j] == 'S' {
 				return i, j
 			}
 		}
@@ -56,31 +56,31 @@ func solve(surface Surface) int {
 	walkNextStepAndMarkDistance = func(row int, col int, counter int) {
 		if checkBounds(row, col) {
 			current_tile := surface[row][col]
-			surface[row][col] = []rune("V")[0]
-			if current_tile != []rune(".")[0] {
+			surface[row][col] = 'V'
+			if current_tile != '.' {
 				distances[width*row+col] = counter
 				counter++
-				if checkBounds(row-1, col) && (current_tile == []rune("|")[0] || current_tile == []rune("J")[0] || current_tile == []rune("L")[0] || current_tile == []rune("S")[0]) {
+				if checkBounds(row-1, col) && (current_tile == '|' || current_tile == 'J' || current_tile == 'L' || current_tile == 'S') {
 					next_tile := surface[row-1][col]
-					if next_tile == []rune("F")[0] || next_tile == []rune("|")[0] || next_tile == []rune("7")[0] {
+					if next_tile == 'F' || next_tile == '|' || next_tile == '7' {
 						walkNextStepAndMarkDistance(row-1, col, counter)
 					}
 				}
-				if checkBounds(row+1, col) && (current_tile == []rune("|")[0] || current_tile == []rune("7")[0] || current_tile == []rune("F")[0] || current_tile == []rune("S")[0]) {
+				if checkBounds(row+1, col) && (current_tile == '|' || current_tile == '7' || current_tile == 'F' || current_tile == 'S') {
 					next_tile := surface[row+1][col]
-					if next_tile == []rune("J")[0] || next_tile == []rune("L")[0] || next_tile == []rune("|")[0] {
+					if next_tile == 'J' || next_tile == 'L' || next_tile == '|' {
 						walkNextStepAndMarkDistance(row+1, col, counter)
 					}
 				}
-				if checkBounds(row, col-1) && (current_tile == []rune("-")[0] || current_tile == []rune("J")[0] || current_tile == []rune("7")[0] || current_tile == []rune("S")[0]) {
+				if checkBounds(row, col-1) && (current_tile == '-' || current_tile == 'J' || current_tile == '7' || current_tile == 'S') {
 					next_tile := surface[row][col-1]
-					if next_tile == []rune("L")[0] || next_tile == []rune("-")[0] || next_tile == []rune("F")[0] {
+					if next_tile == 'L' || next_tile == '-' || next_tile == 'F' {
 						walkNextStepAndMarkDistance(row, col-1, counter)
 					}
 				}
-				if checkBounds(row, col+1) && (current_tile == []rune("-")[0] || current_tile == []rune("F")[0] || current_tile == []rune("L")[0] || current_tile == []rune("S")[0]) {
+				if checkBounds(row, col+1) && (current_tile == '-' || current_tile == 'F' || current_tile == 'L' || current_tile == 'S') {
 					next_tile := surface[row][col+1]
-					if next_tile == []rune("J")[0] || next_tile == []rune("-")[0] || next_tile == []rune("7")[0] {
+					if next_tile == 'J' || next_tile == '-' || next_tile == '7' {
 						walkNextStepAndMarkDistance(row, col+1, counter)
 					}
 				}
@@ -104,25 +104,25 @@ func solve2(surface Surface, original_surface Surface) int {
 	inLoop := func(row int, col int) bool {
 		meet := 0
 		for i := row; checkBounds(i, col); i++ {
-			if surface[i][col] == []rune("V")[0] {
+			if surface[i][col] == 'V' {
 				meet++
 				break
 			}
 		}
 		for i := row; checkBounds(i, col); i-- {
-			if surface[i][col] == []rune("V")[0] {
+			if surface[i][col] == 'V' {
 				meet++
 				break
 			}
 		}
 		for i := col; checkBounds(row, i); i++ {
-			if surface[row][i] == []rune("V")[0] {
+			if surface[row][i] == 'V' {
 				meet++
 				break
 			}
 		}
 		for i := col; checkBounds(row, i); i-- {
-			if surface[row][i] == []rune("V")[0] {
+			if surface[row][i] == 'V' {
 				meet++
 				break
 			}
@@ -138,10 +138,10 @@ func solve2(surface Surface, original_surface Surface) int {
 		parity_bottom := false
 		parity_top := false
 		for dy:= col+1; dy < width; dy++ {
-			if surface[row][dy] == []rune("V")[0] && (original_surface[row][dy] == []rune("|")[0] || original_surface[row][dy] == []rune("F")[0] || original_surface[row][dy] == []rune("7")[0]) {
+			if surface[row][dy] == 'V' && (original_surface[row][dy] == '|' || original_surface[row][dy] == 'F' || original_surface[row][dy] == '7') {
 				parity_bottom = !parity_bottom	
 			}
-			if surface[row][dy] == []rune("V")[0] && (original_surface[row][dy] == []rune("|")[0] || original_surface[row][dy] == []rune("J")[0] || original_surface[row][dy] == []rune("L")[0]) {
+			if surface[row][dy] == 'V' && (original_surface[row][dy] == '|' || original_surface[row][dy] == 'J' || original_surface[row][dy] == 'L') {
 				parity_top = !parity_top	
 			}
 		}
@@ -154,34 +154,34 @@ func solve2(surface Surface, original_surface Surface) int {
 
 	walkNextStepAndMarkOutside = func(row int, col int) {
 		if checkBounds(row - 1, col) {
-			if surface[row - 1][col] == []rune(".")[0] {
-				surface[row - 1][col] = []rune("O")[0]
+			if surface[row - 1][col] == '.' {
+				surface[row - 1][col] = 'O'
 				walkNextStepAndMarkOutside(row - 1, col)
 			}
 		}
 		if checkBounds(row + 1, col) {
-			if surface[row + 1][col] == []rune(".")[0] {
-				surface[row + 1][col] = []rune("O")[0]
+			if surface[row + 1][col] == '.' {
+				surface[row + 1][col] = 'O'
 				walkNextStepAndMarkOutside(row - 1, col)
 			}
 		}
 		if checkBounds(row, col - 1) {
-			if surface[row][col - 1] == []rune(".")[0] {
-				surface[row][col - 1] = []rune("O")[0]
+			if surface[row][col - 1] == '.' {
+				surface[row][col - 1] = 'O'
 				walkNextStepAndMarkOutside(row, col - 1)
 			}
 		}
 		if checkBounds(row, col + 1) {
-			if surface[row][col + 1] == []rune(".")[0] {
-				surface[row][col + 1] = []rune("O")[0]
+			if surface[row][col + 1] == '.' {
+				surface[row][col + 1] = 'O'
 				walkNextStepAndMarkOutside(row, col + 1)
 			}
 		}
 	}
 	for row := 0; row < height; row++ {
 		for col := 0; col < width; col++ {
-			if !inLoop(row, col) && surface[row][col] != []rune("O")[0] {
-				surface[row][col] = []rune("O")[0]
+			if !inLoop(row, col) && surface[row][col] != 'O' {
+				surface[row][col] = 'O'
 				walkNextStepAndMarkOutside(row, col)
 			}
 		}
@@ -189,7 +189,7 @@ func solve2(surface Surface, original_surface Surface) int {
 	count := 0
 	for row := 0; row < height; row++ {
 		for col := 0; col < width; col++ {
-		if surface[row][col] == []rune(".")[0] && checkParity(row, col) {
+		if surface[row][col] == '.' && checkParity(row, col) {
 			count++	
 			}
 		}
@@ -203,12 +203,56 @@ func cleanSurface(surface Surface) {
 	width := len(surface[0])
 	for row := 0; row < height; row++ {
 		for col := 0; col < width; col++ {
-			if surface[row][col] != []rune("V")[0] {
-				surface[row][col] = []rune(".")[0]
+			if surface[row][col] != 'V' {
+				surface[row][col] = '.'
 			}
 		}
 	}
 }
+
+
+// chatgpt, thank you for saving me time, bro
+// Determine the correct shape of 'S' based on adjacent tiles
+func restoreTile(grid [][]rune, x, y int) rune {
+	// Define the directions for north, south, east, and west
+	north, south, east, west := false, false, false, false
+
+	// Check north
+	if x > 0 && (grid[x-1][y] == '|' || grid[x-1][y] == '7' || grid[x-1][y] == 'F') {
+		north = true
+	}
+	// Check south
+	if x < len(grid)-1 && (grid[x+1][y] == '|' || grid[x+1][y] == 'L' || grid[x+1][y] == 'J') {
+		south = true
+	}
+	// Check west
+	if y > 0 && (grid[x][y-1] == '-' || grid[x][y-1] == 'L' || grid[x][y-1] == 'F') {
+		west = true
+	}
+	// Check east
+	if y < len(grid[x])-1 && (grid[x][y+1] == '-' || grid[x][y+1] == '7' || grid[x][y+1] == 'J') {
+		east = true
+	}
+	//fmt.Println(x, y, north, east, south, west)
+	// Determine the pipe shape based on connections
+	switch {
+	case north && south:
+		return '|'
+	case east && west:
+		return '-'
+	case north && east:
+		return 'L'
+	case north && west:
+		return 'J'
+	case south && west:
+		return '7'
+	case south && east:
+		return 'F'
+	default:
+		return '.' // If no valid connection is found (shouldn't happen)
+	}
+}
+
 
 func main() {
 	fmt.Printf("\nAOC-2023 Day10 Solution\n\n")
@@ -227,6 +271,8 @@ func main() {
 //		for i:=0; i < len(original_surface); i++ {
 //			fmt.Println(string(original_surface[i]))
 //		}
+		x, y := findStart(original_surface)
+		original_surface[x][y] = restoreTile(original_surface, x, y)
 		fmt.Println("Part2: ", solve2(surface, original_surface))
 //		for i:=0; i < len(surface); i++ {
 //			fmt.Println(string(surface[i]))
