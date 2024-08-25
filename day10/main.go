@@ -91,7 +91,7 @@ func solve(surface Surface) int {
 	return ((slices.Max(distances) + 1) / 2)
 }
 
-func solve2(surface Surface) int {
+func solve2(surface Surface, original_surface Surface) int {
 	height := len(surface)
 	width := len(surface[0])
 	checkBounds := func(row int, col int) bool {
@@ -133,6 +133,23 @@ func solve2(surface Surface) int {
 			return true
 		}
 	}
+
+	checkParity := func(row int, col int) bool {
+		parity_bottom := false
+		parity_top := false
+		for dy:= col+1; dy < width; dy++ {
+			if surface[row][dy] == []rune("V")[0] && (original_surface[row][dy] == []rune("|")[0] || original_surface[row][dy] == []rune("F")[0] || original_surface[row][dy] == []rune("7")[0]) {
+				parity_bottom = !parity_bottom	
+			}
+			if surface[row][dy] == []rune("V")[0] && (original_surface[row][dy] == []rune("|")[0] || original_surface[row][dy] == []rune("J")[0] || original_surface[row][dy] == []rune("L")[0]) {
+				parity_top = !parity_top	
+			}
+		}
+		if parity_top && parity_bottom {
+			return true
+		}
+		return false
+	}
 	var walkNextStepAndMarkOutside func(row int, col int)
 
 	walkNextStepAndMarkOutside = func(row int, col int) {
@@ -172,7 +189,7 @@ func solve2(surface Surface) int {
 	count := 0
 	for row := 0; row < height; row++ {
 		for col := 0; col < width; col++ {
-		if surface[row][col] == []rune(".")[0] {
+		if surface[row][col] == []rune(".")[0] && checkParity(row, col) {
 			count++	
 			}
 		}
@@ -210,7 +227,7 @@ func main() {
 		for i:=0; i < len(original_surface); i++ {
 			fmt.Println(string(original_surface[i]))
 		}
-		fmt.Println("Part2: ", solve2(surface))
+		fmt.Println("Part2: ", solve2(surface, original_surface))
 		for i:=0; i < len(surface); i++ {
 			fmt.Println(string(surface[i]))
 		}
