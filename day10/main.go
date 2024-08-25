@@ -244,7 +244,7 @@ func restoreStartTile(grid Surface, x, y int) rune {
 	case south && east:
 		return 'F'
 	default:
-		return '.'
+		panic("wrong input")
 	}
 }
 
