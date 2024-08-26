@@ -33,6 +33,7 @@ func identifyCardStructure(cards_structure []int) int {
 		"[1 2 2]":     3,
 		"[1 1 1 2]":   2,
 		"[1 1 1 1 1]": 1,
+
 	}
 	key := fmt.Sprint(cards_structure)
 	if val, ok := structureMap[key]; ok {
@@ -155,7 +156,6 @@ func solvePart1(filePath string) int {
 	for i, v := range hands {
 		t := i + 1
 		total_win = total_win + t*v.bid
-
 	}
 	return total_win
 }
