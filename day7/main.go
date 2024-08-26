@@ -22,26 +22,21 @@ type ByCards []Hand
 type ByCardsWithJoker []Hand
 
 func identifyCardStructure(cards_structure []int) int {
-	if slices.Equal(cards_structure, []int{5}) {
-		return 7
+	sort.Slice(cards_structure, func(i, j int) bool {
+		return cards_structure[i] < cards_structure[j]
+	})
+	structureMap := map[string]int{
+		"[5]":         7,
+		"[1 4]":       6,
+		"[2 3]":       5,
+		"[1 1 3]":     4,
+		"[1 2 2]":     3,
+		"[1 1 1 2]":   2,
+		"[1 1 1 1 1]": 1,
 	}
-	if slices.Equal(cards_structure, []int{1, 4}) {
-		return 6
-	}
-	if slices.Equal(cards_structure, []int{2, 3}) {
-		return 5
-	}
-	if slices.Equal(cards_structure, []int{1, 1, 3}) {
-		return 4
-	}
-	if slices.Equal(cards_structure, []int{1, 2, 2}) {
-		return 3
-	}
-	if slices.Equal(cards_structure, []int{1, 1, 1, 2}) {
-		return 2
-	}
-	if slices.Equal(cards_structure, []int{1, 1, 1, 1, 1}) {
-		return 1
+	key := fmt.Sprint(cards_structure)
+	if val, ok := structureMap[key]; ok {
+		return val
 	}
 	return 0
 }
@@ -53,9 +48,6 @@ func getHandTypeAsNum(cards string) int {
 	}
 	var cards_structure []int
 	cards_structure = maps.Values(cards_counter)
-	sort.Slice(cards_structure, func(i, j int) bool {
-		return cards_structure[i] < cards_structure[j]
-	})
 	return identifyCardStructure(cards_structure)
 
 }
@@ -79,9 +71,6 @@ func getHandTypeAsNumWithJoker(cards string) int {
 		max_index := slices.Index(cards_structure, max_value)
 		cards_structure[max_index] = cards_structure[max_index] + joker_count
 	}
-	sort.Slice(cards_structure, func(i, j int) bool {
-		return cards_structure[i] < cards_structure[j]
-	})
 	return identifyCardStructure(cards_structure)
 }
 
