@@ -49,11 +49,7 @@ func solve(surface Surface) int {
 	var distances []int = make([]int, width*height)
 
 	checkBounds := func(row int, col int) bool {
-		if row < 0 || col < 0 || row > height-1 || col > width-1 {
-			return false
-		} else {
-			return true
-		}
+		return row >= 0 && col >= 0 && row < height && col < width
 	}
 
 	var walkNextStepAndMarkDistance func(row int, col int, counter int)
@@ -103,11 +99,7 @@ func solve2(surface Surface, original_surface Surface) int {
 	height := len(surface)
 
 	checkBounds := func(row int, col int) bool {
-		if row < 0 || col < 0 || row > height-1 || col > width-1 {
-			return false
-		} else {
-			return true
-		}
+		return row >= 0 && col >= 0 && row < height && col < width
 	}
 
 	inLoop := func(row int, col int) bool {
