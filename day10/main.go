@@ -104,8 +104,8 @@ func solve2(surface Surface, original_surface Surface) int {
 
 	inLoop := func(row int, col int) bool {
 		directions := [][2]int{{1, 0}, {-1, 0}, {0, 1}, {0, -1}}
-		meet := 0
 
+		meet := 0
 		for _, dir := range directions {
 			for i, j := row, col; checkBounds(i, j); i, j = i+dir[0], j+dir[1] {
 				if surface[i][j] == 'V' {
@@ -114,7 +114,6 @@ func solve2(surface Surface, original_surface Surface) int {
 				}
 			}
 		}
-
 		return meet == 4
 	}
 
