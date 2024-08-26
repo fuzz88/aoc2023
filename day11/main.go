@@ -41,7 +41,7 @@ func readImageFromFile(filePath string) Image {
 	return result
 }
 
-func solvePart1(image Image) int {
+func solve(image Image, expansion_coeff int) int {
 	var galaxies []Galaxy
 	for row, line := range image {
 		for col, item := range line {
@@ -66,12 +66,12 @@ func solvePart1(image Image) int {
 			distance := absInt(galaxy_A.x-galaxy_B.x) + absInt(galaxy_A.y-galaxy_B.y)
 			for t := min(galaxy_A.x, galaxy_B.x); t < max(galaxy_A.x, galaxy_B.x); t++ {
 				if !vertical_gaps[t] {
-					distance++
+					distance = distance + expansion_coeff
 				}
 			}
 			for t := min(galaxy_A.y, galaxy_B.y); t < max(galaxy_A.y, galaxy_B.y); t++ {
 				if !horizontal_gaps[t] {
-					distance++
+					distance = distance + expansion_coeff
 				}
 			}
 			total_distance = total_distance + distance
@@ -90,6 +90,7 @@ func main() {
 		fmt.Println(filePath)
 		image := readImageFromFile(filePath)
 		fmt.Println("lines count: ", len(image))
-		fmt.Println("Part1 :", solvePart1(image))
+		fmt.Println("Part1 :", solve(image, 1))
+		fmt.Println("Part2 :", solve(image, 999999))
 	}
 }
