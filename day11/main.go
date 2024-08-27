@@ -61,23 +61,22 @@ func solve(image Image, expansion_coeff int) int {
 	total_distance := 0
 	for i := 0; i < len(galaxies)-1; i++ {
 		for j := i + 1; j < len(galaxies); j++ {
-			galaxy_A := galaxies[i]
-			galaxy_B := galaxies[j]
-			distance := absInt(galaxy_A.x-galaxy_B.x) + absInt(galaxy_A.y-galaxy_B.y)
-			for t := min(galaxy_A.x, galaxy_B.x); t < max(galaxy_A.x, galaxy_B.x); t++ {
-				if !vertical_gaps[t] {
+			A := galaxies[i]
+			B := galaxies[j]
+			distance := absInt(A.x-B.x) + absInt(A.y-B.y)
+			for col_idx := min(A.x, B.x);col_idx < max(A.x, B.x);col_idx++ {
+				if !vertical_gaps[col_idx] {
 					distance = distance + expansion_coeff
 				}
 			}
-			for t := min(galaxy_A.y, galaxy_B.y); t < max(galaxy_A.y, galaxy_B.y); t++ {
-				if !horizontal_gaps[t] {
+			for row_idx := min(A.y, B.y); row_idx < max(A.y, B.y); row_idx++ {
+				if !horizontal_gaps[row_idx] {
 					distance = distance + expansion_coeff
 				}
 			}
 			total_distance = total_distance + distance
 		}
 	}
-
 	return total_distance
 }
 
