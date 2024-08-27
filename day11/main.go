@@ -64,7 +64,7 @@ func solve(image Image, expansion_coeff int) int {
 			A := galaxies[i]
 			B := galaxies[j]
 			distance := absInt(A.x-B.x) + absInt(A.y-B.y)
-			for col_idx := min(A.x, B.x);col_idx < max(A.x, B.x);col_idx++ {
+			for col_idx := min(A.x, B.x); col_idx < max(A.x, B.x); col_idx++ {
 				if !vertical_gaps[col_idx] {
 					distance = distance + expansion_coeff
 				}
