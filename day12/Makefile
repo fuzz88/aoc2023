@@ -1,6 +1,6 @@
 .PHONY: run
 
-INPUTS=sample1.txt
+INPUTS=sample1.txt test1.txt
 
 run: main.go $(INPUTS)
 	go run main.go $(INPUTS)
