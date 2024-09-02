@@ -14,3 +14,8 @@ Maybe it is more useful to return at 2015 AOC and try python.
 Or developing the game for fun is all I need for now.
 
 Don't forget to have fun, guys. It really matters.
+
+
+
+
+P.S. How about using channels and goroutines? The natural way of proceeding in mastering golang is the skill of parallelizing algos. IMHO 
