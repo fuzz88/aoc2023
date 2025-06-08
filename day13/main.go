@@ -4,7 +4,6 @@ import (
 	"bufio"
 	"fmt"
 	"os"
-	"slices"
 	"sync"
 )
 
@@ -83,12 +82,16 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 	return terrainChan
 }
 
-func compareRows(row1 int, row2 int, t *Terrain) bool {
-	ls1 := row1 * t.lineLength
-	le1 := row1*t.lineLength + t.lineLength
-	ls2 := row2 * t.lineLength
-	le2 := row2*t.lineLength + t.lineLength
-	return slices.Equal(t.terrain[ls1:le1], t.terrain[ls2:le2])
+func compareRows(row1 int, row2 int, t *Terrain) int {
+	diff := 0
+	for shift := 0; shift < t.lineLength; shift++ {
+		idx1 := row1*t.lineLength + shift
+		idx2 := row2*t.lineLength + shift
+		if t.terrain[idx1] != t.terrain[idx2] {
+			diff++
+		}
+	}
+	return diff
 }
 
 func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
@@ -99,7 +102,7 @@ func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
 
 	for row := 0; row < row_total-1; row++ {
 		next_row := row + 1
-		if compareRows(row, next_row, t) {
+		if compareRows(row, next_row, t) == 0 {
 			found = row + 1
 
 			first_row := row
@@ -108,7 +111,7 @@ func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
 				first_row--
 				second_row++
 				if first_row >= 0 && second_row < row_total {
-					if !compareRows(first_row, second_row, t) {
+					if compareRows(first_row, second_row, t) != 0 {
 						found = 0
 						break
 					}
@@ -125,15 +128,16 @@ func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
 	}
 }
 
-func compareCols(col1 int, col2 int, t *Terrain) bool {
+func compareCols(col1 int, col2 int, t *Terrain) int {
+	diff := 0
 	row_total := len(t.terrain) / t.lineLength
 	for row := 0; row < row_total; row++ {
 		row_shift := row * t.lineLength
 		if t.terrain[row_shift+col1] != t.terrain[row_shift+col2] {
-			return false
+			diff++
 		}
 	}
-	return true
+	return diff
 }
 
 func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
@@ -143,7 +147,7 @@ func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
 
 	for col := 0; col < t.lineLength-1; col++ {
 		next_col := col + 1
-		if compareCols(col, next_col, t) {
+		if compareCols(col, next_col, t) == 0 {
 			found = col + 1
 
 			first_col := col
@@ -152,7 +156,7 @@ func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
 				first_col--
 				second_col++
 				if first_col >= 0 && second_col < t.lineLength {
-					if !compareCols(first_col, second_col, t) {
+					if compareCols(first_col, second_col, t) != 0 {
 						found = 0
 						break
 					}
