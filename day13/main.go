@@ -39,6 +39,7 @@ func makeInputChan(fileName string) <-chan string {
 type Terrain struct {
 	terrain    []rune
 	lineLength int
+	id         int
 }
 
 func parseInput(inputChan <-chan string) <-chan *Terrain {
@@ -49,12 +50,15 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 
 		var terrain []rune
 		lineCount := 0
+		id := 0
 
 		for line := range inputChan {
 			if len(line) == 0 {
+				id++
 				terrainChan <- &Terrain{
 					terrain:    terrain,
 					lineLength: len(terrain) / lineCount,
+					id:         id,
 				}
 				terrain = nil
 				lineCount = 0
@@ -68,9 +72,11 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 		}
 		// there is no empty line after last terrain,
 		// so yield it when line iteration had stopped.
+		id++
 		terrainChan <- &Terrain{
 			terrain:    terrain,
 			lineLength: len(terrain) / lineCount,
+			id:         id,
 		}
 	}()
 
@@ -79,9 +85,9 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 
 func compareRows(row1 int, row2 int, t *Terrain) bool {
 	ls1 := row1 * t.lineLength
-	le1 := row1*t.lineLength + t.lineLength - 1
+	le1 := row1*t.lineLength + t.lineLength
 	ls2 := row2 * t.lineLength
-	le2 := row2*t.lineLength + t.lineLength - 1
+	le2 := row2*t.lineLength + t.lineLength
 	return slices.Equal(t.terrain[ls1:le1], t.terrain[ls2:le2])
 }
 
@@ -111,9 +117,12 @@ func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
 				}
 			}
 		}
-	}
 
-	result <- found * 100
+		if found != 0 {
+			result <- found * 100
+			found = 0
+		}
+	}
 }
 
 func compareCols(col1 int, col2 int, t *Terrain) bool {
@@ -146,15 +155,17 @@ func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
 					if !compareCols(first_col, second_col, t) {
 						found = 0
 						break
-					} else {
-						break
 					}
+				} else {
+					break
 				}
 			}
 		}
+		if found != 0 {
+			result <- found
+			found = 0
+		}
 	}
-
-	result <- found
 }
 
 func checkTerrainForMirrors(terrains <-chan *Terrain) chan int {
