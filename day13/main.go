@@ -4,12 +4,14 @@ import (
 	"bufio"
 	"fmt"
 	"os"
+	"slices"
+	"sync"
 )
 
 func makeInputChan(fileName string) <-chan string {
 	inputChan := make(chan string)
 
-	go func(fileName string, inputChan chan string) {
+	go func() {
 		defer close(inputChan)
 
 		file, err := os.Open(fileName)
@@ -29,10 +31,147 @@ func makeInputChan(fileName string) <-chan string {
 		if err := scanner.Err(); err != nil {
 			fmt.Fprintln(os.Stderr, err)
 		}
-
-	}(fileName, inputChan)
+	}()
 
 	return inputChan
+}
+
+type Terrain struct {
+	terrain    []rune
+	lineLength int
+}
+
+func parseInput(inputChan <-chan string) <-chan *Terrain {
+	terrainChan := make(chan *Terrain)
+
+	go func() {
+		defer close(terrainChan)
+
+		var terrain []rune
+		lineCount := 0
+
+		for line := range inputChan {
+			if len(line) == 0 {
+				terrainChan <- &Terrain{
+					terrain:    terrain,
+					lineLength: len(terrain) / lineCount,
+				}
+				terrain = nil
+				lineCount = 0
+				continue
+			}
+
+			for _, ch := range line {
+				terrain = append(terrain, ch)
+			}
+			lineCount++
+		}
+		// there is no empty line after last terrain,
+		// so yield it when line iteration had stopped.
+		terrainChan <- &Terrain{
+			terrain:    terrain,
+			lineLength: len(terrain) / lineCount,
+		}
+	}()
+
+	return terrainChan
+}
+
+func compareRows(row1 int, row2 int, t *Terrain) bool {
+	ls1 := row1 * t.lineLength
+	le1 := row1*t.lineLength + t.lineLength - 1
+	ls2 := row2 * t.lineLength
+	le2 := row2*t.lineLength + t.lineLength - 1
+	return slices.Equal(t.terrain[ls1:le1], t.terrain[ls2:le2])
+}
+
+func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	found := 0
+	row_total := len(t.terrain) / t.lineLength
+
+	for row := 0; row < row_total-1; row++ {
+		next_row := row + 1
+		if compareRows(row, next_row, t) {
+			found = row + 1
+
+			first_row := row
+			second_row := next_row
+			for {
+				first_row--
+				second_row++
+				if first_row >= 0 && second_row < row_total {
+					if !compareRows(first_row, second_row, t) {
+						found = 0
+						break
+					}
+				} else {
+					break
+				}
+			}
+		}
+	}
+
+	result <- found * 100
+}
+
+func compareCols(col1 int, col2 int, t *Terrain) bool {
+	row_total := len(t.terrain) / t.lineLength
+	for row := 0; row < row_total; row++ {
+		row_shift := row * t.lineLength
+		if t.terrain[row_shift+col1] != t.terrain[row_shift+col2] {
+			return false
+		}
+	}
+	return true
+}
+
+func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
+	defer wg.Done()
+
+	found := 0
+
+	for col := 0; col < t.lineLength-1; col++ {
+		next_col := col + 1
+		if compareCols(col, next_col, t) {
+			found = col + 1
+
+			first_col := col
+			second_col := next_col
+			for {
+				first_col--
+				second_col++
+				if first_col >= 0 && second_col < t.lineLength {
+					if !compareCols(first_col, second_col, t) {
+						found = 0
+						break
+					} else {
+						break
+					}
+				}
+			}
+		}
+	}
+
+	result <- found
+}
+
+func checkTerrainForMirrors(terrains <-chan *Terrain) chan int {
+	result := make(chan int)
+
+	var wg sync.WaitGroup
+	for terrain := range terrains {
+		wg.Add(2)
+		go checkHorizontal(terrain, result, &wg)
+		go checkVertical(terrain, result, &wg)
+	}
+	go func() {
+		wg.Wait()
+		close(result)
+	}()
+
+	return result
 }
 
 func main() {
@@ -44,9 +183,13 @@ func main() {
 	}
 
 	inputFile := os.Args[1]
-	inputData := makeInputChan(inputFile)
+	terrainsChan := parseInput(makeInputChan(inputFile))
+	results := checkTerrainForMirrors(terrainsChan)
 
-	for line := range inputData {
-		fmt.Println(line)
+	var answer int
+	for result := range results {
+		answer += result
 	}
+
+	fmt.Println(answer)
 }
