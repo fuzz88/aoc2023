@@ -208,10 +208,10 @@ func main() {
 
 	inputFile := os.Args[1]
 	terrainsChan := parseInput(makeInputChan(inputFile))
-	results := checkTerrainForMirrors(terrainsChan)
+	resultsChan := checkTerrainForMirrors(terrainsChan)
 
 	var answer int
-	for result := range results {
+	for result := range resultsChan {
 		answer += result
 	}
 
