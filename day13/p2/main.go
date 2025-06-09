@@ -49,15 +49,12 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 
 		var terrain []rune
 		lineCount := 0
-		id := 0
 
 		for line := range inputChan {
 			if len(line) == 0 {
-				id++
 				terrainChan <- &Terrain{
 					terrain:    terrain,
 					lineLength: len(terrain) / lineCount,
-					id:         id,
 				}
 				terrain = nil
 				lineCount = 0
@@ -71,11 +68,9 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 		}
 		// there is no empty line after last terrain,
 		// so yield it when line iteration had stopped.
-		id++
 		terrainChan <- &Terrain{
 			terrain:    terrain,
 			lineLength: len(terrain) / lineCount,
-			id:         id,
 		}
 	}()
 
