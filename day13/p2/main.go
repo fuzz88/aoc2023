@@ -84,9 +84,11 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 
 func compareRows(row1 int, row2 int, t *Terrain) int {
 	diff := 0
+	base1 := row1 * t.lineLength
+	base2 := row2 * t.lineLength
 	for shift := 0; shift < t.lineLength; shift++ {
-		idx1 := row1*t.lineLength + shift
-		idx2 := row2*t.lineLength + shift
+		idx1 := base1 + shift
+		idx2 := base2 + shift
 		if t.terrain[idx1] != t.terrain[idx2] {
 			diff++
 		}
