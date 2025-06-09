@@ -117,6 +117,9 @@ func checkHorizontal(t *Terrain, result chan int, wg *sync.WaitGroup) {
 						break
 					}
 					total_diff += diff
+					if total_diff > 1 {
+						break
+					}
 				} else {
 					break
 				}
@@ -168,6 +171,9 @@ func checkVertical(t *Terrain, result chan int, wg *sync.WaitGroup) {
 						break
 					}
 					total_diff += diff
+					if total_diff > 1 {
+						break
+					}
 				} else {
 					break
 				}
