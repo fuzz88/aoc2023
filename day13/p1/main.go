@@ -38,7 +38,6 @@ func makeInputChan(fileName string) <-chan string {
 type Terrain struct {
 	terrain    []rune
 	lineLength int
-	id         int
 }
 
 func parseInput(inputChan <-chan string) <-chan *Terrain {
@@ -57,7 +56,6 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 				terrainChan <- &Terrain{
 					terrain:    terrain,
 					lineLength: len(terrain) / lineCount,
-					id:         id,
 				}
 				terrain = nil
 				lineCount = 0
@@ -75,7 +73,6 @@ func parseInput(inputChan <-chan string) <-chan *Terrain {
 		terrainChan <- &Terrain{
 			terrain:    terrain,
 			lineLength: len(terrain) / lineCount,
-			id:         id,
 		}
 	}()
 
