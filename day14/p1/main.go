@@ -23,13 +23,15 @@ func readInput(filename string) []byte {
 
 	data := make([]byte, 0, fileSize)
 	var scanner = bufio.NewScanner(file)
-
+	
+	lineCount := 0
 	for scanner.Scan() {
 		line := scanner.Text()
-		for i := 0; i < len(line); i++ {
-			data = append(data, line[i])
-		}
+		data = append(data, line...)
+		lineCount++
 	}
+
+	fmt.Println("Line length:", fileSize / int64(lineCount) - 1)
 
 	return data
 }
