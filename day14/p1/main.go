@@ -6,7 +6,7 @@ import (
 	"os"
 )
 
-func readInput(filename string) []byte {
+func readInput(filename string) (int, []byte) {
 	file, err := os.Open(filename)
 	if err != nil {
 		fmt.Fprintln(os.Stderr, err)
@@ -31,9 +31,7 @@ func readInput(filename string) []byte {
 		lineCount++
 	}
 
-	fmt.Println("Line length:", fileSize / int64(lineCount) - 1)
-
-	return data
+	return int(fileSize / int64(lineCount) - 1), data
 }
 
 func main() {
@@ -45,9 +43,10 @@ func main() {
 	}
 
 	inputFile := os.Args[1]
-	inputData := readInput(inputFile)
+	lineLength, inputData := readInput(inputFile)
 
 	fmt.Println(inputFile)
 	fmt.Println(inputData)
+	fmt.Println("Line length:", lineLength)
 
 }
