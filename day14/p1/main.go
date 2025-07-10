@@ -83,7 +83,6 @@ func countRocksNorth(field *[]byte, cols int, rows int) int {
 			}
 			// fmt.Println(col, scores)
 			results <- scores
-
 		}()
 	}
 
@@ -111,5 +110,4 @@ func main() {
 	cols, rows, field := readInput(inputFile)
 
 	fmt.Println(countRocksNorth(&field, cols, rows))
-
 }
