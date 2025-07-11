@@ -6,15 +6,6 @@ import (
 	"os"
 )
 
-type Rock struct {
-	x int
-	y int
-}
-type Cube struct {
-	x int
-	y int
-}
-
 func readInput(filename string) (int, int, []byte) {
 	file, err := os.Open(filename)
 	if err != nil {
@@ -174,7 +165,7 @@ func main() {
 
 	// this solution has a lot of issues. for example it is faster not to swap values so many times,
 	// but find proper place for rock and swap one time with it
-	
+
 	// we can precalculate boundaries for each position, because cube-shaped rocks dont move. so we dont need to cycle through elements to find a place,
 	// but can maybe somehow to lookup precalculated boundaries for a rock's position.
 
