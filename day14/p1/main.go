@@ -35,8 +35,8 @@ func readInput(filename string) (int, int, []byte) {
 	return int(fileSize/int64(lineCount) - 1), lineCount, data
 }
 
-func makeColsChan(field *[]byte, cols int, rows int) chan []byte {
-	output := make(chan []byte)
+func makeColsChan(field *[]byte, cols int, rows int) chan *[]byte {
+	output := make(chan *[]byte)
 
 	go func() {
 		result := make([][]byte, cols)
@@ -51,7 +51,7 @@ func makeColsChan(field *[]byte, cols int, rows int) chan []byte {
 		}
 
 		for col := 0; col < cols; col++ {
-			output <- result[col]
+			output <- &result[col]
 		}
 		close(output)
 	}()
@@ -72,7 +72,7 @@ func countRocksNorth(field *[]byte, cols int, rows int) int {
 			defer wg.Done()
 			scores := 0
 			score := rows
-			for idx, item := range col {
+			for idx, item := range *col {
 				if item == 'O' {
 					scores += score
 					score -= 1
